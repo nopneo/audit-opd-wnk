@@ -1432,6 +1432,13 @@
   </section>
 
   <section class="table-wrap">
+    <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center;">
+      <span style="font-size:12px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Quick Fill:</span>
+      <button type="button" class="btn ghost" onclick="fillAllCriteria('1')" style="padding:8px 14px; font-size:12px;">✓ บันทึก 1 ทุกข้อ</button>
+      <button type="button" class="btn ghost" onclick="fillAllCriteria('0')" style="padding:8px 14px; font-size:12px;">✗ บันทึก 0 ทุกข้อ</button>
+      <button type="button" class="btn ghost" onclick="fillAllCriteria('na')" style="padding:8px 14px; font-size:12px;">- บันทึก NA ทุกข้อ</button>
+      <button type="button" class="btn ghost" onclick="clearAllCriteria()" style="padding:8px 14px; font-size:12px; border-color:var(--rule); color:var(--ink-soft);">↺ ล้างทั้งหมด</button>
+    </div>
     <table class="audit">
       <thead>
         <tr>
@@ -1714,10 +1721,10 @@
   const USERNAME_KEY = 'opd_audit_username_v1';
   const DEFAULT_AUDITORS = [
     'นพ.นิรัตน์ ชนะประโคน',
-    'นายอัฑฒ์ฐากร จันทร์ธีรากร',
-    'นายอดิศักดิ์ จ้อยโชติ',
-    'นางสาวนงลักษณ์ พรมมาพงษ์',
     'นางสาวพิมพ์ใจ ฉุนจะโปะ',
+    'นางสาวนงลักษณ์ พรมมาพงษ์',
+    'นายอดิศักดิ์ จ้อยโชติ',
+    'นายอัฑฒ์ฐากร จันทร์ธีรากร',
     'นางสาวศรินรัตน์ อิ่มสันเทียะ '
   ];
 
@@ -2005,6 +2012,38 @@
   document.querySelectorAll('.num-input.bonus, .num-input.deduct').forEach(inp => {
     inp.addEventListener('input', recalc);
   });
+
+  /* ================================================================
+     QUICK FILL BUTTONS
+  ================================================================ */
+  function fillAllCriteria(value) {
+    const allGroups = document.querySelectorAll('.pill-group');
+    allGroups.forEach(group => {
+      // Clear all pills first
+      group.querySelectorAll('.pill').forEach(p => p.className = 'pill');
+      
+      // Set new value
+      if (value) {
+        group.dataset.activeVal = value;
+        const pill = group.querySelector(`.pill[data-val="${value}"]`);
+        if (pill) {
+          pill.classList.add('active-' + (value === 'na' ? 'na' : value));
+        }
+      } else {
+        delete group.dataset.activeVal;
+      }
+    });
+    recalc();
+  }
+
+  function clearAllCriteria() {
+    const allGroups = document.querySelectorAll('.pill-group');
+    allGroups.forEach(group => {
+      group.querySelectorAll('.pill').forEach(p => p.className = 'pill');
+      delete group.dataset.activeVal;
+    });
+    recalc();
+  }
 
   /* ================================================================
      RECALCULATE
